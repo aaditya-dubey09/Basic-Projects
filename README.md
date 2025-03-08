@@ -1,2 +1,2 @@
 # Basic-Projects
-A collection of my basic React and Next.js projects, including a To-Do list, Weather App, and more.
+A collection of my basic React, Next.js and Vue projects, including a To-Do list, Weather App, and more.
