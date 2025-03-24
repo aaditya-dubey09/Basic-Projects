@@ -6,7 +6,8 @@ function WeatherApp() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   
-  const API_KEY = process.env.OPEN_WEATHER_API_KEY || "YOUR_FALLBACK_API_KEY";
+  const API_KEY = "YOUR_ACTUAL_OPENWEATHERMAP_API_KEY";
+
   
   const fetchWeatherData = async (searchLocation) => {
     setLoading(true);
