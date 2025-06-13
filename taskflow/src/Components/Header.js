@@ -3,12 +3,12 @@ import PropTypes from 'prop-types';
 
 export default function Header(props) {
   return (
-    <nav className="navbar bg-body-tertiary d-flex space-between">
+    <nav className="navbar bg-gradient d-flex space-between">
       <div className="container-fluid">
         <a className="navbar-brand">{props.title}</a>
-        <a className="nav-link active" aria-current="page" href="#">
-          Home
-        </a>
+          <a className="nav-link active" aria-current="page" href="#">
+            Home
+          </a>
         <a className="nav-link" href="#">
           About
         </a>
@@ -23,12 +23,18 @@ export default function Header(props) {
         </a>
         <ul className="dropdown-menu">
           <li>
-            <a className="dropdown-item" href="https://github.com/aaditya-dubey09">
+            <a
+              className="dropdown-item"
+              href="https://github.com/aaditya-dubey09"
+            >
               GitHub
             </a>
           </li>
           <li>
-            <a className="dropdown-item" href="https://linkedin.com/in/aadityadubey">
+            <a
+              className="dropdown-item"
+              href="https://linkedin.com/in/aadityadubey"
+            >
               LinkedIn
             </a>
           </li>
