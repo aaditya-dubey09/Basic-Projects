@@ -1,32 +1,126 @@
-import React from 'react'
+import React, { useState } from "react";
 
-const TodoItem = ({todo, onDelete}) => {
+const TodoItem = ({ todo, onDelete, onToggleComplete, onEdit }) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedTitle, setEditedTitle] = useState(todo.title);
+  const [editedDesc, setEditedDesc] = useState(todo.desc);
+
+  if (!todo?.title?.trim() && !todo?.desc?.trim()) return null;
+
+  const getPriorityBadge = (priority) => {
+    switch ((priority || "").toLowerCase()) {
+      case "high":
+        return "danger";
+      case "medium":
+        return "warning";
+      case "low":
+        return "success";
+      default:
+        return "secondary";
+    }
+  };
+
+  const handleEdit = () => {
+    if (!editedTitle.trim() || !editedDesc.trim()) return;
+    onEdit(todo.sno, editedTitle.trim(), editedDesc.trim());
+    setIsEditing(false);
+  };
+
   return (
-    <div className="card p-4 rounded-4 shadow-lg mb-3 d-flex justify-content-between border-0">
-      {" "}
-      <div className="d-flex align-items-center flex-grow-1 text-end">
-        <button
-          className="btn btn-sm btn-danger border-0 rounded-circle p-2 me-2"
-          onClick={() => {
-            onDelete(todo);
-          }}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            fill="currentColor"
-            className="bi bi-trash-fill"
-            viewBox="2 5 13 7"
-          >
-            <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0" />
-          </svg>
-        </button>
-          <h4 className="text-black mb-0 p-2">{todo.title}</h4>
+    <div className="card p-4 rounded-4 shadow-lg mb-3 border-0">
+      <div className="d-flex justify-content-between align-items-center">
+        <div className="d-flex align-items-center flex-wrap">
+          <input
+            id="checkbox"
+            name="checkbox"
+            type="checkbox"
+            checked={todo.completed}
+            onChange={() => onToggleComplete(todo.sno)}
+            className="form-check-input me-2 rounded-2"
+          />
+
+          {isEditing ? (
+            <input
+              id="text"
+              name="text"
+              type="text"
+              className="form-control form-control-sm m-2 border-0 rounded-5"
+              value={editedTitle}
+              onChange={(e) => setEditedTitle(e.target.value)}
+            />
+          ) : (
+            <h4 className="text-theme me-2 mb-0">{todo.title}</h4>
+          )}
+
+          {todo.priority && !isEditing && (
+            <span
+              className={`badge bg-${getPriorityBadge(
+                todo.priority
+              )} ms-3 me-3`}
+            >
+              {todo.priority.charAt(0).toUpperCase() + todo.priority.slice(1)}
+            </span>
+          )}
         </div>
-        <p className="text-black-50 small mb-0 text-end mx-5">{todo.desc}</p>
+
+        <div className="d-flex gap-2">
+          {isEditing ? (
+            <>
+              <button
+                className="btn btn-sm btn-success rounded-5 border-0"
+                onClick={handleEdit}
+              >
+                Save
+              </button>
+              <button
+                className="btn btn-sm btn-danger rounded-5 border-0"
+                onClick={() => {
+                  setEditedTitle(todo.title);
+                  setEditedDesc(todo.desc);
+                  setIsEditing(false);
+                }}
+              >
+                Cancel
+              </button>
+            </>
+          ) : (
+            <>
+              <button className="btn btn-sm" onClick={() => setIsEditing(true)}>
+                <i className="bi bi-pencil text-theme"></i>
+              </button>
+              <button
+                className="btn btn-sm btn-danger border-0 rounded-circle p-1"
+                onClick={() => onDelete(todo)}
+              >
+                <i className="bi bi-trash-fill"></i>
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+
+      <div className="d-flex align-items-center mx-4 mt-2">
+        <i
+          className="bi bi-bar-chart-fill small mb-0 text-theme-50"
+          style={{ transform: "rotateZ(90deg)" }}
+        ></i>
+        {isEditing ? (
+          <input
+            id="text"
+            name="text"
+            type="text"
+            className="form-control form-control-sm ms-2 rounded-5 border-0"
+            value={editedDesc}
+            onChange={(e) => setEditedDesc(e.target.value)}
+          />
+        ) : (
+          <p className="text-theme-50 small mb-0 me-2 rounded-5 border-0">
+            {todo.desc}
+          </p>
+        )}
+      </div>
     </div>
   );
-}
+};
 
-export default TodoItem
+export default TodoItem;

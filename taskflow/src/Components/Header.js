@@ -1,25 +1,36 @@
-import React from "react";
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
+import React, { useEffect } from "react";
 
-export default function Header(props) {
+export default function Header({
+  title,
+  searchBar,
+  theme,
+  setTheme,
+  searchQuery,
+  setSearchQuery,
+}) {
+  useEffect(() => {
+    document.body.className = "";
+    const safeTheme = theme.split(" ")[0];
+    document.body.classList.add(`theme-${safeTheme}`);
+  }, [theme]);
+
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+  };
+
   return (
-    <nav className="navbar bg-gradient d-flex space-between shadow">
+    <nav className="navbar d-flex space-between shadow">
       <div className="container-fluid">
         <div className="navbar-brand fw-bold display-4 text-primary">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            fill="currentColor"
-            className="bi bi-check2-circle"
-            viewBox="1 1 12 15"
-          >
-            <path d="M2.5 8a5.5 5.5 0 0 1 8.25-4.764.5.5 0 0 0 .5-.866A6.5 6.5 0 1 0 14.5 8a.5.5 0 0 0-1 0 5.5 5.5 0 1 1-11 0" />
-            <path d="M15.354 3.354a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0z" />
-          </svg>
+          <i className="bi bi-check2-circle" viewBox="1 1 12 15"></i>
           <Link className="text-decoration-none" to="/">
-            {props.title}
+            {title}
           </Link>
         </div>
         <Link className="nav-link active" aria-current="page" to="/">
@@ -28,74 +39,76 @@ export default function Header(props) {
         <Link className="nav-link" to="/about">
           About
         </Link>
-        <div className="btn-group">
-          <button className="btn btn-sm" type="button">
-            <Link className="nav-link" to="#">
-              Social
-            </Link>
-          </button>
+        <div className="dropdown mx-2">
           <button
+            className="btn btn-sm text-theme rounded-5 dropdown-toggle"
             type="button"
-            className="btn btn-sm dropdown-toggle dropdown-toggle-split"
+            id="themeDropdown"
             data-bs-toggle="dropdown"
             aria-expanded="false"
           >
-            <span className="visually-hidden">Toggle Dropdown</span>
+            Theme
           </button>
-          <ul className="dropdown-menu border-0 shadow">
-            <li className="">
-              <Link
+          <ul className="dropdown-menu" aria-labelledby="themeDropdown">
+            <li>
+              <button
                 className="dropdown-item"
-                to="https://github.com/aaditya-dubey09"
+                onClick={() => {
+                  setTheme("light");
+                  localStorage.setItem("theme", "light");
+                }}
               >
-                GitHub
-              </Link>
+                Light<i className="bi bi-brightness-high-fill me-2"></i>
+              </button>
             </li>
             <li>
-              <Link
+              <button
                 className="dropdown-item"
-                to="https://linkedin.com/in/aadityadubey"
+                onClick={() => {
+                  setTheme("dark");
+                  localStorage.setItem("theme", "dark");
+                }}
               >
-                LinkedIn
-              </Link>
-            </li>
-            {/*<hr className="dropdown-divider" />*/}
-            <li>
-              <Link
-                className="dropdown-item"
-                to="https://instagram.com/cosmophile946"
-              >
-                Instagram
-              </Link>
+                Dark<i className="bi bi-moon-fill me-2"></i>
+              </button>
             </li>
           </ul>
         </div>
 
-        {props.searchBar ? (
-          <form className="d-flex" role="search">
+        {searchBar && (
+          <form
+            className="d-flex position-relative border-bottom"
+            onSubmit={handleSearchSubmit}
+          >
+            <button className="btn btn-sm text-theme" type="submit">
+              <i className="bi bi-search" />
+            </button>
             <input
-              className="form-control me-2"
+              id="search-todos"
+              name="search"
+              className="form-control form-control-sm border-0"
               type="search"
-              placeholder="Search"
+              placeholder="Search todos..."
+              value={searchQuery}
+              onChange={handleSearchChange}
               aria-label="Search"
             />
-            <button className="btn btn-outline-success" type="submit">
-              Search
-            </button>
           </form>
-        ) : (
-          ""
         )}
       </div>
     </nav>
   );
 }
+
 Header.defaultProps = {
   title: "Your Title Here",
-  // searchBar: true,
-}
+};
 
 Header.propTypes = {
   title: PropTypes.string,
   searchBar: PropTypes.bool.isRequired,
-}
+  theme: PropTypes.string.isRequired,
+  setTheme: PropTypes.func.isRequired,
+  searchQuery: PropTypes.string.isRequired,
+  setSearchQuery: PropTypes.func.isRequired,
+};

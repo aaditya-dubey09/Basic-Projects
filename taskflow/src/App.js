@@ -4,63 +4,112 @@ import Todos from "./Components/Todos";
 import Footer from "./Components/Footer";
 import AddTodo from "./Components/AddTodo";
 import About from "./Components/About";
+import Toast from "./Components/Toast";
 import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router,
-  Routes,
-  Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 function App() {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filter, setFilter] = useState("all");
+  const [sort, setSort] = useState({ type: "date", direction: "desc" });
+  const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
+  const [toast, setToast] = useState(null);
+
+  const showToast = (message, type = "info") => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 3000);
+  };
+
   let initTodo;
-  if (localStorage.getItem("todos")===null) {
+  if (localStorage.getItem("todos") === null) {
     initTodo = [];
   } else {
     initTodo = JSON.parse(localStorage.getItem("todos"));
   }
+
+  const [todos, setTodos] = useState(initTodo);
+
   const onDelete = (todo) => {
-    setTodos(todos.filter((e) => {
-      return e !== todo;
-    }));
-    localStorage.setItem("todos", JSON.stringify(todos));
+    setTodos(todos.filter((e) => e !== todo));
+    showToast("Todo deleted!", "danger");
   };
 
-  const addTodo = (title, desc) => {
-    let sno;
-    if (todos.length === 0) {
-      sno = 0;
-    } else {
-      sno = todos[todos.length - 1].sno + 1;
+  const addTodo = (title, desc, priority = "none") => {
+    if (!title || !desc) {
+      showToast("Title or Description can't be empty!", "warning");
+      return;
     }
-    const myTodo = {
-      sno: sno,
-      title: title,
-      desc: desc,
-    }
+    let sno = todos.length === 0 ? 0 : todos[todos.length - 1].sno + 1;
+    const myTodo = { sno, title, desc, priority, completed: false };
     setTodos([...todos, myTodo]);
-  }
-  
-  const [todos, setTodos] = useState(initTodo);
+    showToast("Todo added successfully!", "success");
+  };
+
+  const onToggleComplete = (sno) => {
+    const updatedTodos = todos.map((todo) =>
+      todo.sno === sno ? { ...todo, completed: !todo.completed } : todo
+    );
+    setTodos(updatedTodos);
+    showToast("Todo updated!", "info");
+  };
+
+  const onEdit = (sno, newTitle, newDesc) => {
+    const updatedTodos = todos.map((todo) =>
+      todo.sno === sno ? { ...todo, title: newTitle, desc: newDesc } : todo
+    );
+    setTodos(updatedTodos);
+    showToast("Todo edited!", "success");
+  };
+
   useEffect(() => {
     localStorage.setItem("todos", JSON.stringify(todos));
   }, [todos]);
+
+  const filteredTodos = searchQuery
+    ? todos.filter(
+        (todo) =>
+          todo.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          todo.desc?.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : todos;
+
   return (
     <>
       <Router>
-        <Header title="TaskFlow" searchBar={false} />
+        <Header
+          title="TaskFlow"
+          searchBar={true}
+          todos={todos}
+          theme={theme}
+          setTheme={setTheme}
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+        />
 
         <Routes>
           <Route
             exact
             path="/"
             element={
-                <>
-                  <AddTodo addTodo={addTodo} />
-                  <Todos todos={todos} onDelete={onDelete} />
-                </>
+              <>
+                <AddTodo addTodo={addTodo} showToast={showToast} />
+                <Todos
+                  todos={filteredTodos}
+                  onDelete={onDelete}
+                  sort={sort}
+                  setSort={setSort}
+                  filter={filter}
+                  setFilter={setFilter}
+                  onToggleComplete={onToggleComplete}
+                  onEdit={onEdit}
+                />
+              </>
             }
           ></Route>
           <Route path="/about" element={<About />} />
         </Routes>
 
+        <Toast message={toast?.message} type={toast?.type} />
         <Footer />
       </Router>
     </>

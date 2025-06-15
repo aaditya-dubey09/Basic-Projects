@@ -1,21 +1,24 @@
 import React, { useState } from "react";
 
-const AddTodo = ({ addTodo }) => {
+const AddTodo = ({ addTodo, showToast }) => {
     const [title, setTitle] = useState("");
     const [desc, setDesc] = useState("");
+    const [priority, setPriority] = useState("none");
 
     const submit = (e) => {
         e.preventDefault();
         if (!title || !desc) {
-            alert("Title or Description can't be empty!");
-        } else {
-            addTodo(title, desc);
-            setTitle("");
-            setDesc("");
+            showToast("Please enter both a title and a description!", "warning");
+            return;
         }
+        addTodo(title, desc, priority);
+        setTitle("");
+        setDesc("");
+        setPriority("none");
     };
+
     return (
-        <div className="container my-4">
+        <div className="container my-4 shadow">
             <h3 className="text-center">Add a Todo</h3>
             <form onSubmit={submit}>
                 <div className="form-group">
@@ -24,7 +27,7 @@ const AddTodo = ({ addTodo }) => {
                         type="text"
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
-                        className="form-control shadow bg-transparent border-0 m-1"
+                        className="form-control shadow input-theme border-0 m-1"
                         id="title"
                         placeholder="Enter title..."
                     />
@@ -35,29 +38,32 @@ const AddTodo = ({ addTodo }) => {
                         type="text"
                         value={desc}
                         onChange={(e) => setDesc(e.target.value)}
-                        className="form-control shadow bg-transparent border-0 m-1"
+                        className="form-control shadow input-theme border-0 m-1"
                         id="desc"
                         placeholder="Enter description..."
                     />
                 </div>
+
+                <div className="form-group">
+                    <label htmlFor="priority">Priority</label>
+                    <select
+                        value={priority}
+                        onChange={(e) => setPriority(e.target.value)}
+                        className="form-select shadow bg-theme text-theme border-0 m-1"
+                        id="priority"
+                    >
+                        <option value="none">None</option>
+                        <option value="high">High</option>
+                        <option value="medium">Medium</option>
+                        <option value="low">Low</option>
+                    </select>
+                </div>
+
                 <button
                     type="submit"
                     className="text-white btn btn-sm bg-primary shadow-sm m-2 p-1"
                 >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="16"
-                        height="16"
-                        fill="currentColor"
-                        className="bi bi-plus-lg"
-                        viewBox="2 3 15 12"
-                    >
-                        <path
-                            fillRule="evenodd"
-                            d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2"
-                        />
-                    </svg>
-                    Add Todo
+                    <i className="bi bi-plus-lg"></i> Add Todo
                 </button>
             </form>
         </div>
