@@ -10,7 +10,7 @@ const Footer = () => {
 
         <div className="d-flex gap-3 justify-content-center">
           <a
-            href="https://github.com/yourusername"
+            href="https://github.com/aaditya-dubey09"
             className="text-light text-decoration-none"
             target="_blank"
             rel="noopener noreferrer"
@@ -18,7 +18,7 @@ const Footer = () => {
             <i className="bi bi-github fs-5"></i>
           </a>
           <a
-            href="https://linkedin.com/in/yourusername"
+            href="https://linkedin.com/in/aadityadubey"
             className="text-light text-decoration-none"
             target="_blank"
             rel="noopener noreferrer"
@@ -26,7 +26,7 @@ const Footer = () => {
             <i className="bi bi-linkedin fs-5"></i>
           </a>
           <a
-            href="https://x.com/yourusername"
+            href="https://x.com/itsaadi_09"
             className="text-light text-decoration-none"
             target="_blank"
             rel="noopener noreferrer"
@@ -34,7 +34,7 @@ const Footer = () => {
             <i className="bi bi-twitter-x fs-5"></i>
           </a>
           <a
-            href="https://instagram.com/yourusername"
+            href="https://instagram.com/cosmophile946"
             className="text-light text-decoration-none"
             target="_blank"
             rel="noopener noreferrer"
